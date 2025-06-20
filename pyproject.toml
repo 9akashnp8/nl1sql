@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "chromadb>=1.0.12",
+    "openai-agents>=0.0.19",
     "psycopg[binary]>=3.2.9",
 ]
