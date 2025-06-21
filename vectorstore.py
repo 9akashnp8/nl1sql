@@ -1,8 +1,11 @@
+import os
 import chromadb
 from typing import List, Dict, Any, Optional
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = chromadb.PersistentClient("./data")
-
+embedding_function = OpenAIEmbeddingFunction(api_key=OPENAI_API_KEY, model_name="text-embedding-3-small")
 
 def vectorize_documents(collection_name: str, documents: List[str]) -> None:
     final_documents = []
@@ -20,6 +23,7 @@ def vectorize_documents(collection_name: str, documents: List[str]) -> None:
 
     collection = client.get_or_create_collection(
         name=f"{collection_name}__vectorized",
+        embedding_function=embedding_function
     )
     collection.add(
         documents=[final_documents[i]["content"] for i in range(len(final_documents))],
@@ -29,10 +33,11 @@ def vectorize_documents(collection_name: str, documents: List[str]) -> None:
 
 
 def query(
-    collection_name, query_text: str, max_distance: float = 0.5, limit: int = 5
+    collection_name: str, query_text: str, max_distance: float = 0.5, limit: int = 5
 ) -> List[Dict[str, Any]]:
-    collection = client.get_collection(name=f"{collection_name}__vectorized")
-    results = collection.query(query_texts=query_text, n_results=limit)
+    collection = client.get_collection(name=f"{collection_name}__vectorized", embedding_function=embedding_function)
+    results = collection.query(query_texts=query_text)
+    print(f"Results:; {results}")
     filtered_results = [
         (metadata["source"], dist)
         for doc, dist, metadata in zip(
