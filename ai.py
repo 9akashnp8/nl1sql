@@ -80,7 +80,6 @@ def column_value_resolver(resolved_input: ColumnResolverInput):
 
 agent = Agent(
     name="NL2SQL Agent",
-    description="An agent that converts natural language queries into SQL queries.",
     instructions=core_agent_instructions,
     output_type=AgentOutput,
     tools=[column_value_resolver]
