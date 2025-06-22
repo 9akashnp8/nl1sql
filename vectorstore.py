@@ -33,16 +33,15 @@ def vectorize_documents(collection_name: str, documents: List[str]) -> None:
 
 
 def query(
-    collection_name: str, query_text: str, max_distance: float = 0.5, limit: int = 5
+    collection_name: str, query_text: str, limit: int = 5
 ) -> List[Dict[str, Any]]:
     collection = client.get_collection(name=f"{collection_name}__vectorized", embedding_function=embedding_function)
-    results = collection.query(query_texts=query_text)
+    results = collection.query(query_texts=query_text, n_results=limit)
     print(f"Results:; {results}")
     filtered_results = [
         (metadata["source"], dist)
         for doc, dist, metadata in zip(
             results["documents"][0], results["distances"][0], results["metadatas"][0]
         )
-        if dist <= max_distance
     ]
-    return filtered_results[:limit]
+    return filtered_results
