@@ -1,18 +1,14 @@
 import os
-from data_ingestion import ingest_data
-from vectorstore import query
+from entity_matcher import fuzzy_matcher, semantic_search
 
 database_url = os.getenv("DB_CONNECTION_STRING")
 
-columns = ["ADGEENGLISHNAME"]
+columns = ["title"]
 
 
 def main():
-    # data = []
-    # ingest_data(database_url, "vw_tamm_al_ain_case_status", columns)
-    query_text = "Google"
-    results = query("EName", query_text, 0.2, 1)
-    print(results)
+    print(fuzzy_matcher("books", "title", "science fiction"))
+    print(semantic_search("title", "science fiction"))
 
 
 if __name__ == "__main__":
