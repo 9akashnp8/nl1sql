@@ -37,7 +37,6 @@ def query(
 ) -> List[Dict[str, Any]]:
     collection = client.get_collection(name=f"{collection_name}__vectorized", embedding_function=embedding_function)
     results = collection.query(query_texts=query_text, n_results=limit)
-    print(f"Results:; {results}")
     filtered_results = [
         (metadata["source"], dist)
         for doc, dist, metadata in zip(
