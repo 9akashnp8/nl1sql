@@ -1,6 +1,8 @@
+import json
 from agents import Agent, function_tool
 from pydantic import BaseModel, Field
 from typing_extensions import TypedDict
+from entity_matcher import EntityMatcher
 
 from vectorstore import query
 
@@ -48,6 +50,7 @@ class AgentOutput(BaseModel):
 
 
 class ColumnResolverInput(TypedDict):
+    table_name: str
     column_name: str
     value: str
 
@@ -57,30 +60,33 @@ def column_value_resolver(resolved_input: ColumnResolverInput):
     Resolves the entity name to exact value in the database.
     
     Args:
+        table_name (str): The name of the table where the column exists.
         column_name (str): The name of the column to resolve the value from.
         value (str): The partial or incomplete value to resolve.
     
     Returns:
-        str: The resolved exact value from the database.
+        fuzzy_match (list): List of fuzzy matched values from the column along with score.
+        semantic_match (list): List of semantically matched values from the column along with score.
     """
-    column_name = resolved_input["column_name"]
-    value = resolved_input["value"]
-    try:
-        resolved_value = query(
-            collection_name=f"{column_name}__vectorized",
-            query_text=value,
-            max_distance=0.2,
-            limit=1
-        )
-    except Exception as e:
-        raise ValueError(f"Error resolving value: {e}")
-    else:
-        return resolved_value[0]
+    matcher = EntityMatcher(
+        table_name=resolved_input.get("table_name", "books"),
+        column_name=resolved_input["column_name"]
+    )
+    fuzzy_match = matcher.fuzzy_match(resolved_input["value"])
+    sematic_match = matcher.semantic_search(resolved_input["value"])
+
+    return {
+        "fuzzy_match": fuzzy_match,
+        "semantic_match": sematic_match
+    }
     
+with open("table_config.json", "r") as f:
+    config = json.load(f)
+
 
 agent = Agent(
     name="NL2SQL Agent",
-    instructions=core_agent_instructions,
+    instructions=core_agent_instructions.format(config=json.dumps(config)),
     output_type=AgentOutput,
     tools=[column_value_resolver]
 )

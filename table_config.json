@@ -1,0 +1,87 @@
+{
+  "table": "books",
+  "primaryKey": "id",
+  "columns": [
+    {
+      "name": "id",
+      "type": "integer",
+      "nullable": false,
+      "default": "nextval('books_id_seq'::regclass)"
+    },
+    {
+      "name": "title",
+      "type": "varchar(400)",
+      "nullable": false
+    },
+    {
+      "name": "author",
+      "type": "varchar(1500)",
+      "nullable": false
+    },
+    {
+      "name": "pages",
+      "type": "varchar(10)",
+      "nullable": true
+    },
+    {
+      "name": "genre",
+      "type": "varchar(50)",
+      "nullable": true
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "nullable": true
+    },
+    {
+      "name": "published_date",
+      "type": "varchar(30)",
+      "nullable": true
+    },
+    {
+      "name": "publisher",
+      "type": "varchar(100)",
+      "nullable": true
+    },
+    {
+      "name": "language",
+      "type": "varchar(5)",
+      "nullable": true
+    },
+    {
+      "name": "average_rating",
+      "type": "varchar(10)",
+      "nullable": true
+    },
+    {
+      "name": "ratings_count",
+      "type": "integer",
+      "nullable": true,
+      "default": 0
+    },
+    {
+      "name": "thumbnail",
+      "type": "varchar(150)",
+      "nullable": true
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp",
+      "nullable": true,
+      "default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp",
+      "nullable": true,
+      "default": "CURRENT_TIMESTAMP"
+    }
+  ],
+  "indexes": [
+    {
+      "name": "books_pkey",
+      "type": "primary",
+      "columns": ["id"]
+    }
+  ]
+}
